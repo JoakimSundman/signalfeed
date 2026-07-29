@@ -1,2 +1,2 @@
 # signalfeed
-Self-hosted RSS reader with sync between desktop and Android, built for keeping up with tech and cybersecurity feeds.
+Signalfeed is a self-hosted RSS reader designed for people who track fast-moving tech and cybersecurity sources, combining reliable cross-device sync with a clean local-first experience: the architecture is split into a `/server` backend API and sync layer, a `/desktop` Qt client for daily triage, an `/android` Kotlin client for mobile reading, and `/docs` for product and technical documentation.
