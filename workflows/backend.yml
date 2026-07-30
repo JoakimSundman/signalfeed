@@ -1,0 +1,67 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - 'server/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'server/**'
+      - '.github/workflows/backend.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: signalfeed
+          POSTGRES_PASSWORD: signalfeed
+          POSTGRES_DB: signalfeed_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        working-directory: server
+        run: |
+          pip install -r requirements.txt
+          pip install ruff mypy pytest pip-audit
+
+      - name: Ruff lint
+        working-directory: server
+        run: ruff check .
+
+      - name: Ruff format check
+        working-directory: server
+        run: ruff format --check .
+
+      - name: Type check
+        working-directory: server
+        run: mypy .
+
+      - name: Run tests
+        working-directory: server
+        env:
+          DATABASE_URL: postgresql://signalfeed:signalfeed@localhost:5432/signalfeed_test
+        run: pytest
+
+      - name: Dependency vulnerability audit
+        working-directory: server
+        run: pip-audit -r requirements.txt
