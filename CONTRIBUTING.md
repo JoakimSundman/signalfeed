@@ -24,7 +24,9 @@ sudo apt install git
 Other distros: use your package manager (`dnf install git`, `pacman -S git`, etc.)
 
 **Confirm it worked (both OSes):** open a **new** terminal and run:
+```bash
 git --version 
+```
 
 ### 2. Install Python (3.11+)
 
