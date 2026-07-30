@@ -1,0 +1,56 @@
+name: Desktop CI
+
+on:
+  push:
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop.yml'
+  pull_request:
+    paths:
+      - 'desktop/**'
+      - '.github/workflows/desktop.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Install Qt system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libxkbcommon0 libgl1
+
+      - name: Install dependencies
+        working-directory: desktop
+        run: |
+          pip install -r requirements.txt
+          pip install ruff mypy pytest
+
+      - name: Ruff lint
+        working-directory: desktop
+        run: ruff check .
+
+      - name: Ruff format check
+        working-directory: desktop
+        run: ruff format --check .
+
+      - name: Type check
+        working-directory: desktop
+        run: mypy .
+
+      - name: Run tests
+        working-directory: desktop
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: pytest
