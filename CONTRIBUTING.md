@@ -98,7 +98,36 @@ pre-commit run --all-files
 Should run without errors (may say "no files to check" if there's
 nothing to lint yet — that's fine).
 
-### 5. If any command isn't recognized
+### 5. Environment variables
+
+This project uses a `.env` file for local secrets (database credentials),
+which is not committed to Git.
+
+1. Create a `.env` file in the repo root
+2. Add values for `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB`
+
+### 6. Changing the Postgres password later
+
+The `POSTGRES_PASSWORD` env var is only used the *first time* Postgres
+initializes its data volume — changing `.env` alone after that point does
+**not** update the actual database password, and will cause the backend
+to fail to connect (mismatched credentials, not a real lockout).
+
+To change it properly on an existing database (avoid putting the password in your shell history):
+
+    docker compose exec db psql -U <username> -d <dbname>
+
+Then run `\password <username>` inside `psql`, and update `.env` to match.
+
+Alternatively, if you don't need to keep existing local data, wipe and
+reinitialize:
+```bash
+docker compose down -v
+```
+(this deletes the database volume entirely — do not do this against a
+server holding real data)
+
+### 7. If any command isn't recognized
 
 This almost always means PATH wasn't updated in your current terminal
 session. Fix:
