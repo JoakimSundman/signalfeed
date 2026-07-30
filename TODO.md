@@ -11,8 +11,8 @@
 
 ## Build order
 - [ ] Step 1: Server infra — Debian install, Docker, Tailscale, Postgres container
-- [ ] Step 1.1 Article retention/cleanup — periodic job (APScheduler) to delete old,
-      unstarred articles so storage doesn't grow unbounded. Decide exact
+- [ ] Step 1.1 Article retention/cleanup — periodic job (APScheduler) to delete old unstarred
+      articles so disk usage doesn't grow without bound. Decide exact
       rule (age cutoff? per-feed cap?) when implementing.
 - [ ] Step 1.2 Consider optional `image_url` column on `articles` if feeds provide
       a thumbnail/enclosure — not in original schema, decide if wanted.
