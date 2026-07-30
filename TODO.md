@@ -1,0 +1,29 @@
+# TODO
+
+## CI / DevOps
+- [ ] `docker-build.yml` — waiting on a `server/Dockerfile` to exist first
+- [ ] `server` — currently fails `mypy` (no .py files) and has no tests;
+      expected until backend skeleton work begins (see below)
+- [ ] Once backend has real code: confirm `backend.yml` goes fully green
+      (ruff, mypy, pytest, pip-audit all passing for real)
+- [ ] `android.yml` — build check (`gradlew assembleDebug`) + `ktlint`,
+      once Android skeleton exists
+- [ ] Consider `detekt` for Kotlin static analysis (optional, security-focused)
+- [ ] `dependabot.yml` for scheduled version-update PRs (not just security
+      patches) — hold off until there are enough dependencies for this
+      to matter
+- [ ] Add collaborator (friend) + review branch protection settings on `main`
+
+## Build order
+- [ ] Step 1: Server infra — Debian install, Docker, Tailscale, Postgres container
+- [ ] Step 2: Backend skeleton — SQLAlchemy models, Alembic, basic CRUD, containerize
+- [ ] Step 3: Auth — password hashing, sessions table, login endpoint,
+      `get_current_user` dependency, admin CLI for user creation
+- [ ] Step 4: Feed fetching — feedparser + APScheduler
+- [ ] Step 5: Subscriptions + `/sync` endpoint
+- [ ] Step 6: OPML import
+- [ ] Step 7: Desktop client (PySide6)
+- [ ] Step 8: Android client (Kotlin + Compose) — skeleton started early,
+      see below
+- [ ] Step 9: Polish — full-text search, unread counts, favicons, push
+      notifications (FCM)
