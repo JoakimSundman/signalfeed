@@ -113,11 +113,11 @@ initializes its data volume — changing `.env` alone after that point does
 **not** update the actual database password, and will cause the backend
 to fail to connect (mismatched credentials, not a real lockout).
 
-To change it properly on an existing database:
-```bash
-docker compose exec db psql -U <username> -d <dbname> -c "ALTER USER <username> WITH PASSWORD 'newpassword';"
-```
-Then update `.env` to match.
+To change it properly on an existing database (avoid putting the password in your shell history):
+
+    docker compose exec db psql -U <username> -d <dbname>
+
+Then run `\password <username>` inside `psql`, and update `.env` to match.
 
 Alternatively, if you don't need to keep existing local data, wipe and
 reinitialize:
