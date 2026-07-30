@@ -1,3 +1,5 @@
+from typing import cast
+
 import pytest
 from PySide6.QtWidgets import QApplication
 
@@ -8,4 +10,4 @@ def qapp() -> QApplication:
     app = QApplication.instance()
     if app is None:
         app = QApplication([])
-    return app
+    return cast(QApplication, app)
