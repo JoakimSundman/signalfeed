@@ -98,13 +98,13 @@ pre-commit run --all-files
 Should run without errors (may say "no files to check" if there's
 nothing to lint yet — that's fine).
 
-## 5. Environment variables
+### 5. Environment variables
 
 This project uses a `.env` file for local secrets (database credentials),
-which is not committed to git.
+which is not committed to Git.
 
-1. Copy the example file: `.env.example` → `.env`
-2. Fill in your own values (defaults are fine for local development)
+1. Create a `.env` file in the repo root
+2. Add values for `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB`
 
 ### 6. Changing the Postgres password later
 
