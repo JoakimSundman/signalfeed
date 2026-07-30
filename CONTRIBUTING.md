@@ -69,8 +69,10 @@ Open a terminal in the cloned repo folder.
 - Linux: `cd` into wherever you cloned it.
 
 **Windows:**
+```bash
 pip install pre-commit
 pre-commit install
+```
 
 **Linux:**
 ```bash
@@ -87,7 +89,9 @@ pre-commit install
 > Then restart your terminal or run `source ~/.bashrc`.
 
 **Confirm it worked (both OSes):**
+```bash
 pre-commit run --all-files
+```
 
 Should run without errors (may say "no files to check" if there's
 nothing to lint yet — that's fine).
