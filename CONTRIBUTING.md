@@ -106,6 +106,13 @@ which is not committed to Git.
 1. Create a `.env` file in the repo root
 2. Add values for `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB`
 
+.env.example
+```bash
+POSTGRES_USER=signalfeed
+POSTGRES_PASSWORD=changeme
+POSTGRES_DB=signalfeed
+```
+
 ### 6. Changing the Postgres password later
 
 The `POSTGRES_PASSWORD` env var is only used the *first time* Postgres
