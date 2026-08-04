@@ -1,3 +1,3 @@
 import sqlalchemy as db
 
-print(db.__version__())
+db.__version__
