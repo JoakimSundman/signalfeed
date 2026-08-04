@@ -27,3 +27,15 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(db.String(255))
     created_at: Mapped[dt.datetime] = mapped_column(db.DateTime, server_default=func.now())
     is_admin: Mapped[bool] = mapped_column(db.Boolean, default=False)
+
+
+class Feed(Base):
+    __tablename__ = "feed"
+
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    url: Mapped[str] = mapped_column(db.String(2048), unique=True)
+    title: Mapped[str] = mapped_column(db.String(500))
+    favicon_url: Mapped[str] = mapped_column(db.String(2048))
+    last_fetched_at: Mapped[dt.datetime | None] = mapped_column(
+        db.DateTime, server_default=func.now()
+    )
