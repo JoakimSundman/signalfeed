@@ -54,7 +54,7 @@ class Feed(Base):
 """
 Article model:
 - id: Unique identifier for the article (primary key)
-- feed_id: Foreign key to feed for the article 
+- feed_id: Foreign key to feed for the article (FK)
 - guid: Unique identifier for the article from the feed itself, 
         used to detect duplicates when re-fetching 
         (String, max length 2048, unique)
@@ -77,3 +77,45 @@ class Article(Base):
     title: Mapped[str] = mapped_column(db.String(500))
     summary: Mapped[str] = mapped_column(db.String(500))
     published_at: Mapped[dt.datetime] = mapped_column(db.DateTime)
+
+
+"""
+ArticleState model:
+- id: Unique identifier for the articlestate (primary key)
+- user_id: Unique identifier for per-user article state (FK)
+- article_id: Unique identifier for the article (FK)
+- is_read: Boolean for if article has been read or not (bool)
+- is_starred: Boolean for if the article is starred by the user (bool)
+- updated_at: Date and time for when the article was last updated (datetime)
+"""
+
+
+class ArticleState(Base):
+    __tablename__ = "articlestate"
+
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    article_id: Mapped[int] = mapped_column(ForeignKey("articles.id"))
+    is_read: Mapped[bool] = mapped_column(db.Boolean, default=False)
+    is_starred: Mapped[bool] = mapped_column(db.Boolean, default=False)
+    updated_at: Mapped[dt.datetime] = mapped_column(db.DateTime)
+
+
+"""
+Subscription model: 
+- id: Unique identifier for the subscription (primary key)
+- user_id: Unique identifier for the user (FK)
+- feed_id: Unqiue identifier for the feed (FK)
+- folder_or_tag: Folder or tag string (String, max length 100)
+- added_at: Date and time added to subscription (datetime)
+"""
+
+
+class Subscription(Base):
+    __tablename__ = "subscriptions"
+
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    feed_id: Mapped[int] = mapped_column(ForeignKey("feeds.id"))
+    folder_or_tag: Mapped[str | None] = mapped_column(db.String(100))
+    added_at: Mapped[dt.datetime] = mapped_column(db.DateTime)
