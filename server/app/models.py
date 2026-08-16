@@ -86,3 +86,13 @@ class Subscription(Base):
     feed_id: Mapped[int] = mapped_column(ForeignKey("feeds.id"))
     folder_or_tag: Mapped[str | None] = mapped_column(db.String(100))
     added_at: Mapped[dt.datetime] = mapped_column(db.DateTime)
+
+
+class Session(Base):
+    __tablename__ = "sessions"
+
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    token: Mapped[str] = mapped_column(db.String(255), unique=True)
+    created_at: Mapped[dt.datetime] = mapped_column(db.DateTime, server_default=func.now())
+    expires_at: Mapped[dt.datetime] = mapped_column(db.DateTime)
