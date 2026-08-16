@@ -113,6 +113,18 @@ POSTGRES_PASSWORD=changeme
 POSTGRES_DB=signalfeed
 ```
 
+`DATABASE_URL` is derived from these values and used in three places:
+Docker Compose (passed to the backend container), Alembic migrations, and
+the backend's own database connection (`app/database.py`). When running
+Alembic or backend code directly on your machine (not inside Docker), you
+need to export `DATABASE_URL` manually in your shell first, since Docker
+Compose only sets it *inside* the container:
+
+    export DATABASE_URL="postgresql+psycopg://signalfeed:signalfeed@localhost:5432/signalfeed"
+
+(match the username/password/dbname to your own `.env` values — note
+`localhost`, not `db`, since you're connecting from outside the Docker network)
+
 ### 6. Changing the Postgres password later
 
 The `POSTGRES_PASSWORD` env var is only used the *first time* Postgres
