@@ -42,7 +42,7 @@ def prompt_new_password():
         repeated = getpass.getpass("Repeat the password for new user: ")
         if password == repeated and password.strip() != "":
             return password
-        print(f"Password and repetition does not match. Attemps left: {MAX_ATTEMPTS - attempt -1}")
+        print(f"Password and repetition does not match. Attemps left: {MAX_ATTEMPTS - attempt - 1}")
 
     print("Too many failed attempts, exiting...")
     sys.exit(1)
