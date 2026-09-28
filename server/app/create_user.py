@@ -37,13 +37,23 @@ def prompt_username(session):
 
 
 def prompt_new_password():
-    """Ask for password for the new user, max 3 attempts to match the inputed password"""
-    pass
+    for attempt in range(MAX_ATTEMPTS):
+        password = getpass.getpass("Password for the new user: ")
+        repeated = getpass.getpass("Repeat the password for new user: ")
+        if password == repeated and password.strip() != "":
+            return password
+        print(f"Password and repetition does not match. Attemps left: {MAX_ATTEMPTS - attempt -1}")
+
+    print("Too many failed attempts, exiting...")
+    sys.exit(1)
 
 
 def prompt_is_admin():
-    """Asks Y/N if user is an admin"""
-    pass
+    is_admin = input("Is user an admin? [y/N] ").strip().lower()
+    if is_admin == "y":
+        return True
+    else:
+        return False
 
 
 def create_user(session, username: str, password: str, is_admin: bool):
