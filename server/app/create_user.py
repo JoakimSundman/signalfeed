@@ -38,11 +38,18 @@ def prompt_username(session):
 
 def prompt_new_password():
     for attempt in range(MAX_ATTEMPTS):
-        password = getpass.getpass("Password for the new user: ")
+        while True:
+            password = getpass.getpass("Password for the new user: ")
+            if len(password.encode("utf_16")) > 40:
+                print("Choose a shorter password please")
+            else:
+                break
         repeated = getpass.getpass("Repeat the password for new user: ")
         if password == repeated and password.strip() != "":
             return password
-        print(f"Password and repetition does not match. Attemps left: {MAX_ATTEMPTS - attempt - 1}")
+        print(
+            f"Password and repetition does not match. Attempts left: {MAX_ATTEMPTS - attempt - 1}"
+        )
 
     print("Too many failed attempts, exiting...")
     sys.exit(1)
