@@ -7,6 +7,7 @@ from sqlalchemy import select
 
 from app.database import session_creator
 from app.models import User
+from app.security import hash_password
 
 MAX_ATTEMPTS = 3
 
@@ -40,7 +41,7 @@ def prompt_new_password():
     for attempt in range(MAX_ATTEMPTS):
         while True:
             password = getpass.getpass("Password for the new user: ")
-            if len(password.encode("utf_16")) > 40:
+            if len(password.encode("utf_8")) > 40:
                 print("Choose a shorter password please")
             else:
                 break
@@ -64,8 +65,9 @@ def prompt_is_admin():
 
 
 def create_user(session, username: str, password: str, is_admin: bool):
-    """Hash, create user, commit"""
-    pass
+    new_user = User(username=username, password_hash=hash_password(password), is_admin=is_admin)
+    session.add(new_user)
+    session.commit()
 
 
 def main():
