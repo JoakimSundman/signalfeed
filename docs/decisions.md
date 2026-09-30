@@ -9,6 +9,33 @@ preceding development sessions, not necessarily made on the date shown.
 
 ---
 
+## No async functions (might be temporary)
+
+**Date:** 2026-09-30
+**Context:** FastAPI's performance benefits from `async`/`await` come
+from letting the server handle other requests while waiting on I/O
+(database queries, network calls). That benefit only materializes if
+the entire chain is async-aware — an `async def` endpoint that calls
+synchronous SQLAlchemy underneath gains nothing, since the blocking
+database call still blocks the thread regardless of the keyword on the
+function signature.
+**Decision:** Keep all endpoints and `database.py` synchronous
+(`engine`, `session_creator`/`get_db()`, plain SQLAlchemy `Session`).
+Migrating to real async would require SQLAlchemy's async engine
+(`create_async_engine`, `AsyncSession`, `await session.execute(...)`),
+which is a different `database.py` design, not just adding `async` to
+existing functions.
+**Alternatives considered:** `async def` endpoints on top of the
+current synchronous database layer (rejected: no actual performance
+gain, just a misleading signature that implies non-blocking behavior
+that isn't there).
+**Consequences:** FastAPI still handles synchronous endpoints correctly
+(runs them in a thread pool internally), so this has no meaningful
+downside at this project's scale (~5 users, single mini-PC). Revisiting
+this would mean redesigning `database.py` around SQLAlchemy's async
+API, not a small change — worth reconsidering only if the project ever
+needs to handle significant concurrent load.
+
 ## HTTPS via `tailscale cert`, layered on top of WireGuard
 
 **Date:** 2026-09-30
