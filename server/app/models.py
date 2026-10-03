@@ -38,7 +38,9 @@ class User(Base):
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
     username: Mapped[str] = mapped_column(db.String(50), unique=True)
     password_hash: Mapped[str] = mapped_column(db.String(255))
-    created_at: Mapped[dt.datetime] = mapped_column(db.DateTime, server_default=func.now())
+    created_at: Mapped[dt.datetime] = mapped_column(
+        db.DateTime(timezone=True), server_default=func.now()
+    )
     is_admin: Mapped[bool] = mapped_column(db.Boolean, default=False)
 
 
@@ -50,7 +52,7 @@ class Feed(Base):
     favicon_url: Mapped[str | None] = mapped_column(db.String(2048))
     title: Mapped[str] = mapped_column(db.String(500))
     last_fetched_at: Mapped[dt.datetime | None] = mapped_column(
-        db.DateTime, server_default=func.now()
+        db.DateTime(timezone=True), server_default=func.now()
     )
 
 
@@ -64,7 +66,7 @@ class Article(Base):
     image_url: Mapped[str | None] = mapped_column(db.String(2048))
     title: Mapped[str] = mapped_column(db.String(500))
     summary: Mapped[str] = mapped_column(db.String(500))
-    published_at: Mapped[dt.datetime] = mapped_column(db.DateTime)
+    published_at: Mapped[dt.datetime] = mapped_column(db.DateTime(timezone=True))
 
 
 class ArticleState(Base):
@@ -75,7 +77,7 @@ class ArticleState(Base):
     article_id: Mapped[int] = mapped_column(ForeignKey("articles.id"))
     is_read: Mapped[bool] = mapped_column(db.Boolean, default=False)
     is_starred: Mapped[bool] = mapped_column(db.Boolean, default=False)
-    updated_at: Mapped[dt.datetime] = mapped_column(db.DateTime)
+    updated_at: Mapped[dt.datetime] = mapped_column(db.DateTime(timezone=True))
 
 
 class Subscription(Base):
@@ -85,7 +87,7 @@ class Subscription(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     feed_id: Mapped[int] = mapped_column(ForeignKey("feeds.id"))
     folder_or_tag: Mapped[str | None] = mapped_column(db.String(100))
-    added_at: Mapped[dt.datetime] = mapped_column(db.DateTime)
+    added_at: Mapped[dt.datetime] = mapped_column(db.DateTime(timezone=True))
 
 
 class Session(Base):
@@ -94,5 +96,7 @@ class Session(Base):
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     token: Mapped[str] = mapped_column(db.String(255), unique=True)
-    created_at: Mapped[dt.datetime] = mapped_column(db.DateTime, server_default=func.now())
-    expires_at: Mapped[dt.datetime] = mapped_column(db.DateTime)
+    created_at: Mapped[dt.datetime] = mapped_column(
+        db.DateTime(timezone=True), server_default=func.now()
+    )
+    expires_at: Mapped[dt.datetime] = mapped_column(db.DateTime(timezone=True))

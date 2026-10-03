@@ -36,6 +36,8 @@ this would mean redesigning `database.py` around SQLAlchemy's async
 API, not a small change — worth reconsidering only if the project ever
 needs to handle significant concurrent load.
 
+---
+
 ## HTTPS via `tailscale cert`, layered on top of WireGuard
 
 **Date:** 2026-09-30
