@@ -59,10 +59,16 @@ jobs:
         working-directory: server
         run: mypy .
 
+      - name: Run database migrations
+        working-directory: server
+        env:
+          DATABASE_URL: postgresql+psycopg://signalfeed:signalfeed@localhost:5432/signalfeed_test
+        run: alembic upgrade head
+
       - name: Run tests
         working-directory: server
         env:
-          DATABASE_URL: postgresql://signalfeed:signalfeed@localhost:5432/signalfeed_test
+          DATABASE_URL: postgresql+psycopg://signalfeed:signalfeed@localhost:5432/signalfeed_test
         run: pytest
 
       - name: Dependency vulnerability audit
