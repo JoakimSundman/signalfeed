@@ -111,6 +111,8 @@ which is not committed to Git.
 POSTGRES_USER=signalfeed
 POSTGRES_PASSWORD=changeme
 POSTGRES_DB=signalfeed
+PASSWORD_PEPPER=changeme
+ADMIN_CLI_PASSWORD=changeme
 ```
 
 `DATABASE_URL` is derived from these values and used in three places:
