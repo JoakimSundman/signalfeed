@@ -9,6 +9,28 @@ preceding development sessions, not necessarily made on the date shown.
 
 ---
 
+## Session tokens stored as SHA-256 hashes
+
+**Date:** 2026-10-17
+**Context:** `POST /login` issues a bearer token that is stored in the
+`sessions` table. Stored in plaintext, a database dump, backup leak or
+SQL log would hand an attacker ready-to-use sessions. (This was visible
+in practice: with `echo=True` the plaintext token showed up in the SQL
+log.)
+**Decision:** Store only `sha256(token)` in `sessions.token_hash`. The
+client receives the original token; on each request the server hashes
+the incoming token and looks the row up by hash. The column was renamed
+from `token` to `token_hash` so the name states what it holds.
+**Alternatives considered:** bcrypt (rejected: tokens are 256 bits of
+randomness from `secrets.token_urlsafe(32)`, so brute force is not
+feasible and a slow hash adds cost without adding security); plaintext
+storage (rejected: see context).
+**Consequences:** The server cannot show a token again after login, which
+is fine since the user simply logs in again. A leaked database does not
+reveal usable tokens, but a token stolen from a client or the network
+still works. No separate verify function is needed since SHA-256 is
+deterministic and the database lookup does the comparison.
+
 ## No async functions (might be temporary)
 
 **Date:** 2026-09-30

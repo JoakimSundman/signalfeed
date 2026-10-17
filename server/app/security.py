@@ -1,3 +1,4 @@
+import hashlib
 import os
 
 import bcrypt
@@ -40,3 +41,7 @@ def verify_password(password, hashed):
         return bcrypt.checkpw(combined, hashed.encode("utf-8"))
     except ValueError:
         return False
+
+
+def hash_token(token):
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()

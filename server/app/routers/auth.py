@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import Session as SessionModel
 from app.models import User
-from app.security import verify_password
+from app.security import hash_token, verify_password
 
 router = APIRouter()
 
@@ -36,7 +36,9 @@ def login(credentials: LoginRequest, db: Session = Depends(get_db)):
         token = secrets.token_urlsafe(32)
         expires_at = datetime.now(timezone.utc) + timedelta(days=14)
 
-        new_session = SessionModel(user_id=user.id, token=token, expires_at=expires_at)
+        new_session = SessionModel(
+            user_id=user.id, token_hash=hash_token(token), expires_at=expires_at
+        )
         db.add(new_session)
         db.commit()
         return LoginResponse(token=token, expires_at=expires_at)

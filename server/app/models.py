@@ -95,7 +95,7 @@ class Session(Base):
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    token: Mapped[str] = mapped_column(db.String(255), unique=True)
+    token_hash: Mapped[str] = mapped_column(db.String(255), unique=True)
     created_at: Mapped[dt.datetime] = mapped_column(
         db.DateTime(timezone=True), server_default=func.now()
     )

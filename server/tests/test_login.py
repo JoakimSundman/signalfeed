@@ -3,7 +3,7 @@ from app.database import session_creator
 from app.main import app
 from app.models import Session as SessionModel
 from app.models import User
-from app.security import hash_password
+from app.security import hash_password, hash_token
 from fastapi.testclient import TestClient
 from sqlalchemy import delete, select
 
@@ -60,3 +60,21 @@ def test_login_with_nonexistent_username():
     response = client.post("/login", json={"username": "Non_user", "password": TEST_PASSWORD})
     assert response.status_code == 401
     assert response.json() == {"detail": "Username or password is not correct"}
+
+
+def test_login_stores_hashed_token_not_plaintext():
+    response = client.post("/login", json={"username": TEST_USERNAME, "password": TEST_PASSWORD})
+    token = response.json()["token"]
+
+    session = session_creator()
+    try:
+        hashed_stmt = select(SessionModel).where(SessionModel.token_hash == hash_token(token))
+        plaintext_stmt = select(SessionModel).where(SessionModel.token_hash == token)
+
+        hashed_row = session.execute(hashed_stmt).scalar_one_or_none()
+        plaintext_row = session.execute(plaintext_stmt).scalar_one_or_none()
+    finally:
+        session.close()
+
+    assert hashed_row is not None
+    assert plaintext_row is None
