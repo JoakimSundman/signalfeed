@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 import pytest
 from app.database import session_creator
 from app.main import app
@@ -78,3 +80,67 @@ def test_login_stores_hashed_token_not_plaintext():
 
     assert hashed_row is not None
     assert plaintext_row is None
+
+
+def login_and_get_token():
+    response = client.post("/login", json={"username": TEST_USERNAME, "password": TEST_PASSWORD})
+    return response.json()["token"]
+
+
+def test_me_without_header_returns_401():
+    response = client.get("/me")
+    assert response.status_code == 401
+    assert response.headers["WWW-Authenticate"] == "Bearer"
+
+
+def test_me_with_wrong_scheme_returns_401():
+    response = client.get("/me", headers={"Authorization": "Basic abc123"})
+    assert response.status_code == 401
+
+
+def test_me_with_unknown_token_returns_401():
+    response = client.get("/me", headers={"Authorization": "Bearer not-a-real-token"})
+    assert response.status_code == 401
+
+
+def test_me_with_expired_token_returns_401():
+    token = "expired-test-token"
+
+    session = session_creator()
+    try:
+        user = session.execute(select(User).where(User.username == TEST_USERNAME)).scalar_one()
+        session.add(
+            SessionModel(
+                user_id=user.id,
+                token_hash=hash_token(token),
+                expires_at=datetime.now(timezone.utc) - timedelta(days=1),
+            )
+        )
+        session.commit()
+    finally:
+        session.close()
+
+    response = client.get("/me", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 401
+
+
+def test_me_with_valid_token_returns_user_without_password_hash():
+    token = login_and_get_token()
+    response = client.get("/me", headers={"Authorization": f"Bearer {token}"})
+    assert response.status_code == 200
+    assert response.json()["username"] == TEST_USERNAME
+    assert "password_hash" not in response.json()
+
+
+def test_logout_invalidates_token():
+    token = login_and_get_token()
+    headers = {"Authorization": f"Bearer {token}"}
+
+    logout_response = client.post("/logout", headers=headers)
+    assert logout_response.status_code == 204
+
+    me_response = client.get("/me", headers=headers)
+    assert me_response.status_code == 401
+
+    second_logout = client.post("/logout", headers=headers)
+    assert second_logout.status_code == 401
