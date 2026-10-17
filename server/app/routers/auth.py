@@ -2,11 +2,12 @@ import secrets
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.dependencies import get_current_session, get_current_user
 from app.models import Session as SessionModel
 from app.models import User
 from app.security import hash_token, verify_password
@@ -44,3 +45,23 @@ def login(credentials: LoginRequest, db: Session = Depends(get_db)):
         return LoginResponse(token=token, expires_at=expires_at)
     else:
         raise HTTPException(status_code=401, detail="Username or password is not correct")
+
+
+class MeResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    username: str
+    created_at: datetime
+
+
+@router.get("/me", response_model=MeResponse)
+def me(user: User = Depends(get_current_user)):
+    return user
+
+
+# TODO add some fault handeling in case 2 logout requests are done at the same time
+# (current version would cause error 500)
+@router.post("/logout", status_code=204)
+def logout(session_row: SessionModel = Depends(get_current_session), db: Session = Depends(get_db)):
+    db.delete(session_row)
+    db.commit()
