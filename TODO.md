@@ -18,11 +18,10 @@
 - [x] Step 1.2 Consider optional `image_url` column on `articles` if feeds provide
       a thumbnail/enclosure — not in original schema, decide if wanted. Nullable `image_url` added directly to schema 
 - [ ] Step 2: Backend skeleton — SQLAlchemy models, Alembic, basic CRUD, containerize
-- [ ] Step 3: Auth — password hashing, sessions table, login endpoint,
+- [x] Step 3: Auth — password hashing, sessions table, login endpoint,
       `get_current_user` dependency, admin CLI for user creation
   - [ ] Rate limiting on `/login` (brute-force protection) — consider `slowapi`
-  - [ ] Review timing-attack surface on username lookup (low priority at
-        current scale, but worth revisiting if the user base grows)
+  - [x] Equalise /login response time for unknown usernames (run bcrypt against a dummy hash)
 - [ ] Step 4: Feed fetching — feedparser + APScheduler
 - [ ] Step 5: Subscriptions + `/sync` endpoint
 - [ ] Step 6: OPML import

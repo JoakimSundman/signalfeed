@@ -3,6 +3,10 @@ import os
 
 import bcrypt
 
+BCRYPT_ROUNDS = 12
+
+DUMMY_HASH = bcrypt.hashpw(b"dummy", bcrypt.gensalt(rounds=BCRYPT_ROUNDS)).decode("utf-8")
+
 
 def _get_pepper():
     pepper = os.getenv("PASSWORD_PEPPER")
@@ -22,7 +26,7 @@ def hash_password(password):
     password_bytes = password.encode("utf-8")
 
     combined = password_bytes + pepper
-    salt = bcrypt.gensalt()  # Default 12-rounds
+    salt = bcrypt.gensalt(rounds=BCRYPT_ROUNDS)  # Default 12-rounds
     password_hashed = bcrypt.hashpw(combined, salt)
 
     return password_hashed.decode("utf-8")

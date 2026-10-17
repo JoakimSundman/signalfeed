@@ -10,7 +10,7 @@ from app.database import get_db
 from app.dependencies import get_current_session, get_current_user
 from app.models import Session as SessionModel
 from app.models import User
-from app.security import hash_token, verify_password
+from app.security import DUMMY_HASH, hash_token, verify_password
 
 router = APIRouter()
 
@@ -31,6 +31,7 @@ def login(credentials: LoginRequest, db: Session = Depends(get_db)):
     user = db.execute(stmt).scalar_one_or_none()
 
     if user is None:
+        verify_password(credentials.password, DUMMY_HASH)
         raise HTTPException(status_code=401, detail="Username or password is not correct")
 
     if verify_password(credentials.password, user.password_hash):
