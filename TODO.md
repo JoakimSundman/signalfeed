@@ -1,7 +1,8 @@
 # TODO
+- [ ] Clean TODO and REPO 
 
 ## CI / DevOps
-- [ ] `docker-build.yml` — waiting on a `server/Dockerfile` to exist first
+- [ ] `docker-build.yml`
 - [ ] `android.yml` — build check (`gradlew assembleDebug`) + `ktlint`,
       once Android skeleton exists
 - [ ] Consider `detekt` for Kotlin static analysis (optional, security-focused)
@@ -10,7 +11,7 @@
       to matter
 
 ## Build order
-- [x] Step 1: Server infra — Debian install, Docker, Tailscale, Postgres container (Debian, Tailscale install awaits for deployment)
+- [x] Step 1: Server infra — Ubuntu install, Docker, Tailscale, Postgres container (Ubuntu, Tailscale install awaits for deployment)
 - [ ] Step 1.1 Article retention/cleanup — periodic job (APScheduler) to delete old unstarred
       articles so disk usage doesn't grow without bound. Decide exact
       rule (age cutoff? per-feed cap?) when implementing.
