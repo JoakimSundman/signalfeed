@@ -5,3 +5,5 @@ psycopg[binary]
 httpx
 httpx2
 alembic
+bcrypt
+pytest

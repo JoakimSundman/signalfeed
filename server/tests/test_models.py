@@ -1,4 +1,4 @@
-from app.models import Article, ArticleState, Feed, Subscription, User
+from app.models import Article, ArticleState, Feed, Session, Subscription, User
 
 
 def test_user_model_has_expected_columns():
@@ -43,3 +43,11 @@ def test_subscription_model_has_expected_columns():
     assert hasattr(Subscription, "feed_id")
     assert hasattr(Subscription, "folder_or_tag")
     assert hasattr(Subscription, "added_at")
+
+
+def test_session_model_has_expected_columns():
+    assert hasattr(Session, "id")
+    assert hasattr(Session, "user_id")
+    assert hasattr(Session, "token_hash")
+    assert hasattr(Session, "created_at")
+    assert hasattr(Session, "expires_at")
