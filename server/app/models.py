@@ -58,11 +58,12 @@ class Feed(Base):
 
 class Article(Base):
     __tablename__ = "articles"
+    __table_args__ = (db.UniqueConstraint("feed_id", "guid", name="uq_articles_feed_id_guid"),)
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    feed_id: Mapped[int] = mapped_column(ForeignKey("feeds.id"))
-    guid: Mapped[str] = mapped_column(db.String(2048), unique=True)
-    url: Mapped[str] = mapped_column(db.String(2048), unique=True)
+    feed_id: Mapped[int] = mapped_column(ForeignKey("feeds.id", ondelete="RESTRICT"))
+    guid: Mapped[str] = mapped_column(db.String(2048))
+    url: Mapped[str] = mapped_column(db.String(2048))
     image_url: Mapped[str | None] = mapped_column(db.String(2048))
     title: Mapped[str] = mapped_column(db.String(500))
     summary: Mapped[str] = mapped_column(db.String(500))
@@ -71,30 +72,40 @@ class Article(Base):
 
 class ArticleState(Base):
     __tablename__ = "article_state"
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "article_id", name="uq_article_state_user_id_article_id"),
+    )
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    article_id: Mapped[int] = mapped_column(ForeignKey("articles.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    article_id: Mapped[int] = mapped_column(ForeignKey("articles.id", ondelete="CASCADE"))
     is_read: Mapped[bool] = mapped_column(db.Boolean, default=False)
     is_starred: Mapped[bool] = mapped_column(db.Boolean, default=False)
-    updated_at: Mapped[dt.datetime] = mapped_column(db.DateTime(timezone=True))
+    updated_at: Mapped[dt.datetime] = mapped_column(
+        db.DateTime(timezone=True), server_default=func.now()
+    )
 
 
 class Subscription(Base):
     __tablename__ = "subscriptions"
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "feed_id", name="uq_subscriptions_user_id_feed_id"),
+    )
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    feed_id: Mapped[int] = mapped_column(ForeignKey("feeds.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    feed_id: Mapped[int] = mapped_column(ForeignKey("feeds.id", ondelete="RESTRICT"))
     folder_or_tag: Mapped[str | None] = mapped_column(db.String(100))
-    added_at: Mapped[dt.datetime] = mapped_column(db.DateTime(timezone=True))
+    added_at: Mapped[dt.datetime] = mapped_column(
+        db.DateTime(timezone=True), server_default=func.now()
+    )
 
 
 class Session(Base):
     __tablename__ = "sessions"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     token_hash: Mapped[str] = mapped_column(db.String(255), unique=True)
     created_at: Mapped[dt.datetime] = mapped_column(
         db.DateTime(timezone=True), server_default=func.now()
