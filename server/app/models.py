@@ -51,9 +51,7 @@ class Feed(Base):
     url: Mapped[str] = mapped_column(db.String(2048), unique=True)
     favicon_url: Mapped[str | None] = mapped_column(db.String(2048))
     title: Mapped[str] = mapped_column(db.String(500))
-    last_fetched_at: Mapped[dt.datetime | None] = mapped_column(
-        db.DateTime(timezone=True), server_default=func.now()
-    )
+    last_fetched_at: Mapped[dt.datetime | None] = mapped_column(db.DateTime(timezone=True))
 
 
 class Article(Base):
